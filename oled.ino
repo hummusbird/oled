@@ -1,3 +1,4 @@
+#include <Vector.h>
 #include <U8g2lib.h>
 #include <Wire.h>
 
@@ -66,7 +67,7 @@ void u8g2_prepare() {
 // }
 
 char receivedChar;
-unsigned long timestamps [1000];
+Vector<unsigned long> timestamps;
 int WPM = 0;
 
 unsigned long lastTimestamp = 0;
@@ -92,7 +93,7 @@ void recvOneChar() {
   if (Serial.available() > 0) {
     receivedChar = Serial.read();
     if ((int)receivedChar != 10) {
-      timestamps += (unsigned long int)millis();
+      timestamps.push_back(millis());
     }
   }
 }
@@ -110,11 +111,16 @@ void calculateWPM() {
   // Serial.write("millis:");
   // Serial.println(millis());
 
-  if (lastTimestamp < millis() - 200 && timestamps[0] != 0) {
+  if (lastTimestamp < millis() - 500 && timestamps[0] != 0) {
     lastTimestamp = millis();
-    keyInputCounter--;
   }
 
-  WPM = keyInputCounter;
-  // Serial.println(WPM);
+  WPM = 0;
+  Serial.write("begin: ");
+  auto i = timestamps.begin();
+  Serial.println(*i);
+
+  Serial.write("end: ");
+   auto j = timestamps.end();
+  Serial.println(*j);
 }

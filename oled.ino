@@ -77,7 +77,7 @@ void recvOneChar() {
         push(millis() / 500);
       }
     }
-  }cd
+  }
 }
 
 void printToDisplay() {

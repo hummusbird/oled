@@ -3,16 +3,12 @@
 
 U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, U8X8_PIN_NONE);
 
-#define LED_NUMLOCK    (1 << 0)
-#define LED_CAPSLOCK   (1 << 1)
-#define LED_SCROLLLOCK (1 << 2)
-
 void u8g2_prepare() {
- u8g2.setFont(u8g2_font_profont11_tf);
- u8g2.setFontRefHeightExtendedText();
- u8g2.setDrawColor(1);
- u8g2.setFontPosTop();
- u8g2.setFontDirection(0);
+  u8g2.setFont(u8g2_font_profont11_tf);
+  u8g2.setFontRefHeightExtendedText();
+  u8g2.setDrawColor(1);
+  u8g2.setFontPosTop();
+  u8g2.setFontDirection(0);
 }
 
 // void u8g2_box_frame() {
@@ -69,25 +65,56 @@ void u8g2_prepare() {
 //  u8g2.drawUTF8(115, 15, "\xb0"); // DEGREE SYMBOL
 // }
 
-void setup(void) {
- u8g2.begin();
- u8g2_prepare();
+char receivedChar;
+unsigned long timestamps [1000];
+int WPM = 0;
 
- Serial.begin(9600);
+unsigned long lastTimestamp = 0;
+
+void setup(void) {
+  u8g2.begin();
+  u8g2_prepare();
+
+  Serial.begin(115200);
+
+  u8g2.clearBuffer();
+  u8g2.drawStr(0, 0, "init...");
+  u8g2.sendBuffer();
 }
 
 void loop(void) {
- u8g2.clearBuffer();
- u8g2_prepare();
+  recvOneChar();
+  calculateWPM();
+  printToDisplay();
+}
 
-  while (Serial.available() == 0) { 
-    String teststr = Serial.readString();
-    teststr.trim();          
+void recvOneChar() {
+  if (Serial.available() > 0) {
+    receivedChar = Serial.read();
+    if ((int)receivedChar != 10) {
+      timestamps += (unsigned long int)millis();
+    }
+  }
+}
 
-    u8g2.clearBuffer();
-    u8g2.drawStr(0, 0, teststr.c_str());
-    u8g2.sendBuffer();              
+void printToDisplay() {
+  u8g2.clearBuffer();
+  u8g2.setFont(u8g2_font_profont11_tf);
+  u8g2.drawStr(0, 0, "WPM:");
+  u8g2.setFont(u8g2_font_logisoso34_tf);
+  u8g2.drawStr(0, 20, String(WPM).c_str());
+  u8g2.sendBuffer();
+}
+
+void calculateWPM() {
+  // Serial.write("millis:");
+  // Serial.println(millis());
+
+  if (lastTimestamp < millis() - 200 && timestamps[0] != 0) {
+    lastTimestamp = millis();
+    keyInputCounter--;
   }
 
- delay(500);
+  WPM = keyInputCounter;
+  // Serial.println(WPM);
 }

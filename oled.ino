@@ -11,14 +11,12 @@ void u8g2_prepare() {
   u8g2.setFontDirection(0);
 }
 
-const int bufferSize = 64;
+const int bufferSize = 24;
 
 long times[bufferSize];
 int idx;
 
 char receivedChar;
-
-float WPM = 0;
 
 void addTime(long time) {
   times[idx] = time;
@@ -28,7 +26,7 @@ void addTime(long time) {
 float checkAverage() {
   int i = 0;
   float effectiveBufferSize = bufferSize;
-  while (times[(idx + i) % bufferSize] < (millis() - 1000 * 10) && i < bufferSize) {
+  while (times[(idx + i) % bufferSize] < (millis() - 1000 * 8) && i < bufferSize) {
     i++;
     effectiveBufferSize -= 1;
   }
@@ -37,22 +35,22 @@ float checkAverage() {
 }
 
 void setup(void) {
-  for (int i = 0; i < bufferSize; i++) {
-    times[i] = -30000;
-  }
   u8g2.begin();
   u8g2_prepare();
 
-  u8g2.clearBuffer();
-  u8g2.setFont(u8g2_font_profont11_tf);
-  u8g2.drawStr(0, 0, "WPM:");
-
   Serial.begin(9600);
+
+  u8g2.clearBuffer();
+  u8g2.drawStr(0, 0, "WPM:");
+  u8g2.sendBuffer();
+
+  for (int i = 0; i < bufferSize; i++) {
+    times[i] = -30000;
+  }
 }
 
 void loop(void) {
   recvOneChar();
-  WPM = checkAverage();
   printToDisplay();
 }
 
@@ -68,10 +66,11 @@ void recvOneChar() {
 void printToDisplay() {
   // Serial.print("WPM: ");
   // Serial.println(WPM);
-  // u8g2.clearBuffer();
-  // u8g2.setFont(u8g2_font_profont11_tf);
-  // u8g2.drawStr(0, 0, "WPM:");
-  // u8g2.setFont(u8g2_font_logisoso34_tf);
-  // u8g2.drawStr(0, 20, String(WPM).c_str());
-  // u8g2.sendBuffer();
+
+  u8g2.clearBuffer();
+  u8g2.setFont(u8g2_font_profont11_tf);
+  u8g2.drawStr(0, 0, "WPM:");
+  u8g2.setFont(u8g2_font_logisoso34_tf);
+  u8g2.drawStr(0, 20, String((int)checkAverage()).c_str());
+  u8g2.sendBuffer();
 }

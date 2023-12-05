@@ -7,33 +7,34 @@ void u8g2_prepare() {
   u8g2.setFont(u8g2_font_profont11_tf);
   u8g2.setFontRefHeightExtendedText();
   u8g2.setDrawColor(1);
-  u8g2.setFontPosTop();
   u8g2.setFontDirection(3);
+  u8g2.setFontPosTop();
 }
 
 void setup(void) {
   u8g2.begin();
   u8g2_prepare();
 
-  Serial.begin(115200);
+  Serial.begin(9600);
 
   u8g2.clearBuffer();
-  u8g2.drawStr(0, 0, "gaming");
+  u8g2.drawStr(0, 60, "init...");
+  delay(1000);
   u8g2.sendBuffer();
+
+  printToDisplay();
 }
 
-void loop(void) {
-  // recvOneChar();
-  printToDisplay();
+void loop(void) { 
 }
 
 void printToDisplay() {
   u8g2.clearBuffer();
   u8g2.setFont(u8g2_font_profont11_tf);
-  u8g2.drawStr(0, 60, "hi chat");
-    u8g2.drawStr(60, 60, "@miaowing");
+  u8g2.drawStr(0, 63, "birb.cc/tkl");
+  u8g2.drawStr(110, 58, "@miaowing");
   u8g2.setFont(u8g2_font_logisoso34_tf);
-  u8g2.drawStr(20, 60, ">~<");
+  u8g2.drawStr(40, 64, ">~<");
 
   u8g2.sendBuffer();
 }

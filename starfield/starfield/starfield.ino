@@ -31,8 +31,8 @@ void loop(void) {
 void printToDisplay() {
   u8g2.clearBuffer();
   u8g2.setFont(u8g2_font_profont11_tf);
-  u8g2.drawStr(0, 63, "birb.cc/tkl");
-  u8g2.drawStr(110, 58, "@miaowing");
+  u8g2.drawStr(0, 59, "miaow.ing");
+  u8g2.drawStr(110, 59, "@miaowing");
   u8g2.setFont(u8g2_font_logisoso34_tf);
   u8g2.drawStr(40, 64, ">~<");
 
